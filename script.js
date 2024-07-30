@@ -16,6 +16,7 @@ async function render(j) {
 }
 
 async function generatePokemon(i, j, pokemonAsJson, name) {
+    let mainPic = pokemonAsJson['sprites']['other']['official-artwork']['front_default'];
     let strength = pokemonAsJson['types'][0]['type']['name'];
     let strengthHTML = `<div id="strength${i}" class="type">${strength}</div>`;
     let weaknessHTML = '';
@@ -24,13 +25,28 @@ async function generatePokemon(i, j, pokemonAsJson, name) {
         let weakness = pokemonAsJson['types'][1]['type']['name'];
         weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
     }
-    main_Board.innerHTML += `<div class="Card">
-                                             <img class="img" id="image">Nr. ${i}<b>${name}</b>
+    main_Board.innerHTML += `<div class="Card" id="${i}">
+                                             <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
                                               <div class="types">${strengthHTML}${weaknessHTML}</div>
                               </div>`;
     document.getElementById('load_Button').innerHTML = `<button onclick="loadMore(${j})">Mehr Pokémon laden</button>`;
     generateFirstTypeColour(strength, i);
     generateSecondTypeColour(i, pokemonAsJson);
+}
+
+function generateFirstTypeColour(strength, i) {
+  
+    document.getElementById(`strength${i}`).classList.add(`${strength}`);
+    document.getElementById(`${i}`).classList.add(`${strength}` + 2);
+}
+
+
+function generateSecondTypeColour(i, pokemonAsJson) {
+
+if (pokemonAsJson['types'][1]) {
+    let type = pokemonAsJson['types'][1]['type']['name'];
+    document.getElementById(`weakness${i}`).classList.add(`${type}`);
+}
 }
 
 function loadMore(j) {
