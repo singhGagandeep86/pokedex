@@ -204,7 +204,7 @@ button:hover {
     justify-content: center;
 }
 
-.detailedCard{
+.detailedCard {
     height: 92vh;
     background-color: rgba(243, 243, 243, 95%);
     display: flex;
@@ -214,13 +214,13 @@ button:hover {
     padding: 24px;
 }
 
-.pok_big_img{
+.pok_big_img {
     width: 320px;
     height: 320px;
     margin-left: 18px;
 }
 
-.heading{
+.heading {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -229,16 +229,16 @@ button:hover {
     align-items: center;
 }
 
-.pokName::first-letter{
+.pokName::first-letter {
     text-transform: capitalize;
 }
 
-.pokemonMain{
+.pokemonMain {
     display: flex;
     align-items: flex-start;
 }
 
-.character{
+.character {
     display: flex;
     flex-direction: column-reverse;
     height: 40%;
@@ -246,20 +246,20 @@ button:hover {
     margin-top: 112px;
 }
 
-.stats{
+.stats {
     width: 100%;
     height: 100%;
     border-radius: 12px;
     background-color: rgba(243, 243, 243, 95%);
 }
 
-.tabs{
+.tabs {
     display: flex;
     justify-content: space-around;
     margin-top: 18px;
 }
 
-.tab{
+.tab {
     background-color: #565353;
     color: white;
     padding-block: 4px;
@@ -268,23 +268,75 @@ button:hover {
     cursor: pointer;
 }
 
-.navinfos{
-        display: flex;
-        height: 88%;
-        justify-content: space-between;
-        align-items: center;
-        padding-inline: 5px;
+.navinfos {
+    display: flex;
+    height: 88%;
+    justify-content: space-between;
+    padding-inline: 5px;
+    color: #32cdc4;
+    font-size: 18px;
 }
 
-.navpre{
+.navpre {
     width: 64px;
     height: 64px;
     transform: scaleX(-1);
     cursor: pointer;
+    margin-top: 110px;
 }
 
-.navnxt{
+.navnxt {
     width: 64px;
     height: 64px;
     cursor: pointer;
+    margin-top: 110px;
+}
+
+.showAbout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 28px;
+}
+
+progress {
+    margin-left: 8px;
+    --w: 200px;
+    /* the width*/
+    --color:
+        /* the progress color */
+        linear-gradient(90deg, #1ecd1e, #ff6161) 0/var(--w);
+    --background: lightgrey;
+    /* the background color */
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    width: var(--w);
+    margin: 0 10px;
+    border-radius: 10em;
+    background: var(--background);
+}
+
+progress[value]::-webkit-progress-bar {
+    border-radius: 10em;
+    background: var(--background);
+}
+
+progress[value]::-webkit-progress-value {
+    border-radius: 10em;
+    background: var(--color);
+}
+
+progress[value]::-moz-progress-bar {
+    border-radius: 10em;
+    background: var(--color);
+}
+
+label {
+    font-size: 10px;
+    font-weight: bold;
+    display: block;
+    margin: 20px 0;
 }

@@ -57,9 +57,12 @@ function loadMore(j) {
 }
 
 async function DetailedPokemon(num) {
+   // document.getElementById('sel_Cardboard').style.display = "";
     let url = 'https://pokeapi.co/api/v2/pokemon/' + `${num}`;
     let pokemon = await fetch(url);
     let pokemonAsJson = await pokemon.json();
+    document.getElementById('body').style.height = "100vh";
+    document.getElementById('body').style.overflow = "hidden";
     let name = pokemonAsJson['forms'][0]['name'];
     let strength = pokemonAsJson['types'][0]['type']['name'];
     let strengthHTML = `<div id="strength_${num}" class="type">${strength}</div>`;
@@ -70,12 +73,15 @@ async function DetailedPokemon(num) {
     }
     let mainPic = pokemonAsJson['sprites']['other']['official-artwork']['front_default'];
     let Selected_Board = document.getElementById('sel_Cardboard');
+    Selected_Board.style.display = "";
     Selected_Board.style.position = "fixed";
-    Selected_Board.innerHTML = `<div id="card${num}" class="detailedCard"><div class="heading"><div class="pokName">${name}</div></div>
-    <div class="pokemonMain"><b>#0${num}</b><img class="pok_big_img" id="image" src="${mainPic}"><div class="character">${strengthHTML}${weaknessHTML}</div></div>
-    <div class="stats"><div class="tabs"><div onclick="showAbout(${num})" class="tab">About</div><div class="tab">Abilities</div><div class="tab">Stats</div><div class="tab">Evolution</div></div>
-    <div class="navinfos"><img class="navpre" id="preButton" onclick="previousPokemon(${num})" src="./Images/Icon/navButton.png"><div id="info_${num}"></div><img class="navnxt" onclick="nextPokemon(${num})" src="./Images/Icon/navButton.png"></div>
-    </div>`;
+    Selected_Board.innerHTML = showSelectedPokemon(num, name, mainPic, strengthHTML, weaknessHTML);
+    document.getElementById('sel_Cardboard').addEventListener('click', function(exit) {
+        if (exit.target !== this)
+          return;
+          exitToMain();
+      });
+    document.getElementById(`info_${num}`).innerHTML = showAbout(num);
     firstGenerateTypeColour(strength, num);
     secondGenerateTypeColour(num, pokemonAsJson);
 }
@@ -92,11 +98,35 @@ function secondGenerateTypeColour(i, pokemonAsJson) {
     }
 }
 
+function showSelectedPokemon(num, name, mainPic, strengthHTML, weaknessHTML) {
+    
+    return `<div id="card${num}" class="detailedCard">
+                <div class="heading">
+                    <div class="pokName">${name}</div>
+                </div>
+                        <div class="pokemonMain"><b>#0${num}</b><img class="pok_big_img" id="image" src="${mainPic}">
+                            <div class="character">${strengthHTML}${weaknessHTML}</div>
+                         </div>
+                                 <div class="stats">
+                                     <div class="tabs">
+                                             <div onclick="showAbout(${num})" class="tab">About</div>
+                                             <div onclick="showAbilities(${num})" class="tab">Abilities</div>
+                                             <div onclick="showStats(${num})" class="tab">Stats</div>
+                                             <div class="tab">Evolution</div>
+                                     </div>
+                                <div class="navinfos">
+                       <img class="navpre" id="preButton" onclick="previousPokemon(${num})" src="./Images/Icon/navButton.png">
+                             <div id="info_${num}"></div>
+                       <img class="navnxt" onclick="nextPokemon(${num})" src="./Images/Icon/navButton.png"></div>
+              </div>`;
+              
+}
+
 function previousPokemon(currentPokemon) {
-        if (currentPokemon > 1) {
-            changedPokemon = currentPokemon - 1;
-            DetailedPokemon(changedPokemon);
-        }
+    if (currentPokemon > 1) {
+        changedPokemon = currentPokemon - 1;
+        DetailedPokemon(changedPokemon);
+       }
 }
 
 function nextPokemon(currentPokemon) {
@@ -104,13 +134,60 @@ function nextPokemon(currentPokemon) {
     DetailedPokemon(changedPokemon);
 }
 
-async function showAbout(currentPokemon){
+async function showAbout(currentPokemon) {
     let url = 'https://pokeapi.co/api/v2/pokemon/' + `${currentPokemon}`;
     let pokemon = await fetch(url);
     let pokemonAsJson = await pokemon.json();
     let height = pokemonAsJson['height'];
     let weight = pokemonAsJson['weight'];
     let about = document.getElementById(`info_${currentPokemon}`);
-    console.log(height + ` gramm`);
-    about.innerHTML = `<h6>${height} cm</h6><br><h6>${weight} gramm</h6>`;
+    about.innerHTML = `<div class="showAbout"><h3>ABOUT</h3><b>Height :  ${height} cm</b><b>Weight : ${weight} gramm</b></div>`;
+}
+
+async function showAbilities(currentPokemon) {
+    let url = 'https://pokeapi.co/api/v2/pokemon/' + `${currentPokemon}`;
+    let pokemon = await fetch(url);
+    let pokemonAsJson = await pokemon.json();
+    let info = document.getElementById(`info_${currentPokemon}`);
+    info.innerHTML = `<div class="showAbout"><h3>ABILITIES</h3><ul id="listability"></ul></div>`;
+    for (i = 0; i < pokemonAsJson['abilities'].length; i++) {
+        let ability = pokemonAsJson['abilities'][i]['ability']['name'];
+        document.getElementById('listability').style.color = "black";
+        document.getElementById('listability').innerHTML += `<li>${ability}</li>`;
+    }
+}
+
+async function showStats(currentPokemon) {
+    let url = 'https://pokeapi.co/api/v2/pokemon/' + `${currentPokemon}`;
+    let pokemon = await fetch(url);
+    let pokemonAsJson = await pokemon.json();
+    let info = document.getElementById(`info_${currentPokemon}`);
+    info.innerHTML = `<div class="showAbout"><h3>STATISTICS</h3><table id="listability"></table></div>`;
+    let stat_1 = pokemonAsJson['stats'][0]['base_stat'];
+    let stat_2 = pokemonAsJson['stats'][1]['base_stat'];
+    let stat_3 = pokemonAsJson['stats'][2]['base_stat'];
+    let stat_4 = pokemonAsJson['stats'][5]['base_stat'];
+    let stat_5 = pokemonAsJson['stats'][3]['base_stat'];
+    let stat_6 = pokemonAsJson['stats'][4]['base_stat'];
+    document.getElementById('listability').innerHTML = showStatsData(stat_1, stat_2, stat_3, stat_4, stat_5, stat_6);
+}
+
+
+function showStatsData(hp, attack, defense, speed, special_attack, special_defense) {
+    return `
+             <tr><td>HP</td><td>: ${hp}<progress value="${hp}" max="120"></progress></td></tr>
+             <tr><td>Attack</td><td>: ${attack} <progress value="${attack}" max="120"></progress></td></tr>
+             <tr><td>Defense</td><td>: ${defense} <progress value="${defense}" max="120"></progress></td></tr>
+             <tr><td>Speed</td><td>: ${speed} <progress value="${speed}" max="120"></progress></td></tr>
+             <tr><td>special-attack</td><td>: ${special_attack} <progress value="${special_attack}" max="120"></progress></td></tr>
+             <tr><td>Speed</td><td>: ${special_defense} <progress value="${special_defense}" max="120"></progress></td></tr>
+    `;
+}
+
+
+function exitToMain(){
+    console.log(`test`);
+    document.getElementById('sel_Cardboard').style.display = "none";
+    document.getElementById('body').style.height = "";
+    document.getElementById('body').style.overflow = "";
 }
