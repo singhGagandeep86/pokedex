@@ -1,5 +1,6 @@
 body {
-    margin: 0;
+    margin: 0 auto;
+    max-width: 1920px;
     box-sizing: border-box;
     background-color: #313131;
     font-family: "Lato", sans-serif;
@@ -183,19 +184,20 @@ button {
 }
 
 button:hover {
-    background-color: rgba(25, 160, 210)
+    background-color: rgba(25, 160, 210);
 }
 
 .pokeBoard {
     width: 95.5%;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    justify-content: center;
 }
 
 .SelectedWindow {
+    height: 100vh;
     width: 100%;
-    position: relative;
+    position: fixed;
     background-color: #0c0b0c54;
     left: 0;
     right: 0;
@@ -204,15 +206,17 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    display: none;
 }
 
 .detailedCard {
-    height: 92vh;
+    height: 92%;
     width: 48%;
     background-color: rgba(243, 243, 243, 95%);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
     border-radius: 14px;
     padding: 24px;
 }
@@ -251,7 +255,7 @@ button:hover {
 
 .stats {
     width: 100%;
-    height: 100%;
+    height: 536px;
     border-radius: 12px;
     background-color: rgba(243, 243, 243, 95%);
     display: flex;
@@ -285,6 +289,16 @@ button:hover {
     font-size: 18px;
 }
 
+
+tr {
+    display: flex;
+}
+
+td {
+    width: 100%;
+    display: flex;
+}
+
 .navpre {
     width: 64px;
     height: 64px;
@@ -310,13 +324,9 @@ button:hover {
 progress {
     margin-left: 8px;
     --w: 200px;
-    /* the width*/
     --color:
-        /* the progress color */
         linear-gradient(90deg, #1ecd1e, #ff6161) 0/var(--w);
     --background: lightgrey;
-    /* the background color */
-
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -374,19 +384,242 @@ label {
     object-fit: contain;
 }
 
-/* HTML: <div class="loader"></div> */
-.loader {
-    width: 50px;
-    --b: 8px; 
-    aspect-ratio: 1;
-    border-radius: 50%;
-    padding: 1px;
-    background: conic-gradient(#0000 10%,#f03355) content-box;
-    -mask:
-      repeating-conic-gradient(#0000 0deg,#000 1deg 20deg,#0000 21deg 36deg),
-      radial-gradient(farthest-side,#0000 calc(100% - var(--b) - 1px),#000 calc(100% - var(--b)));
-    -webkit-mask-composite: destination-in;
-            mask-composite: intersect;
-    animation:l4 1s infinite steps(10);
-  }
-  @keyframes l4 {to{transform: rotate(1turn)}}
+
+/* Responsive */
+
+@media (max-width : 1150px) {
+
+    .board {
+        width: 90%;
+    }
+
+    .logo {
+        margin-left: 20px;
+        margin-right: 28px;
+    }
+
+    .miniLogo {
+        margin-inline: 18px;
+    }
+
+    table {
+        width: 100%;
+        border-spacing: 0px;
+        font-size: 14px;
+    }
+
+    .navpre {
+        width: 42px;
+        height: 42px;
+    }
+
+    .navnxt {
+        width: 42px;
+        height: 42px;
+    }
+
+    .pok_big_img {
+        margin-left: 0px;
+        width: 275px;
+        height: 275px;
+        margin-bottom: 34px;
+    }
+}
+
+@media (max-width : 825px) {
+
+    .navinfos {
+        width: 96%;
+    }
+
+    progress {
+        margin-left: 6px;
+        --w: 160px;
+    }
+
+}
+
+@media (max-width : 785px) {
+
+    .board {
+        width: 96%;
+    }
+
+    progress {
+        margin-left: 4px;
+        --w: 138px;
+    }
+
+    .pokemonMain {
+        flex-direction: column;
+    }
+
+    .character {
+        margin-top: 0px;
+    }
+}
+
+@media (max-width : 675px) {
+
+    .left_Header {
+        font-size: 0px;
+    }
+
+    progress {
+        --w: 118px;
+    }
+
+    .pokemonMain {
+        margin-bottom: 0px;
+    }
+
+    .navinfos {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tab {
+        font-size: 12px;
+    }
+
+    .navpre {
+        margin-top: 4px;
+    }
+
+    .navnxt {
+        margin-top: 4px;
+    }
+
+    .showAbout {
+        margin-top: 0px;
+    }
+
+    .character {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width : 518px) {
+
+    input {
+        width: 172px;
+        height: 28%;
+    }
+
+    .miniLogo {
+        height: 28%;
+    }
+
+    .tab {
+        font-size: 10px;
+        padding-block: 0px;
+        padding-inline: 0px;
+        background-color: transparent;
+        color: #565353;
+    }
+
+    .pok_big_img {
+        width: 235px;
+        height: 235px;
+        margin-bottom: 0px;
+    }
+}
+
+@media (max-width : 458px) {
+    .pok_big_img {
+        width: 185px;
+        height: 185px;
+    }
+
+    table {
+        font-size: 10px;
+    }
+
+    progress {
+        --w: 98px;
+    }
+
+    h3 {
+        font-size: 14px;
+    }
+
+    .evolutionChain {
+        width: 37%;
+        height: 210px;
+        flex-direction: column;
+    }
+
+    .evoutionImage {
+        width: 72%;
+    }
+}
+
+@media (max-width : 378px) {
+    .logo {
+        height: 48%;
+        margin-inline: 6px;
+    }
+
+    .miniLogo {
+        margin-inline: 6px;
+    }
+
+    table {
+        font-size: 8px;
+    }
+
+    progress {
+        --w: 86px;
+    }
+}
+
+
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+    font-size: 20px;
+    display: none;
+}
+
+.spinner {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 280px;
+    height: 280px;
+    -webkit-animation: spin 4s linear infinite;
+    -moz-animation: spin 4s linear infinite;
+    animation: spin 4s linear infinite;
+}
+
+@-moz-keyframes spin {
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
