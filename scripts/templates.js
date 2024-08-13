@@ -41,3 +41,10 @@ function addProperties(Selected_Board){
     document.getElementById('body').style.overflow = "hidden";
     Selected_Board.style.display = "flex";
 }
+
+function showDetailedCard(i, j, mainPic, name, strengthHTML, weaknessHTML){
+    return `<div class="Card" id="${i}" onclick="DetailedPokemon(${i}, ${j})">
+                                             <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
+                                              <div class="types">${strengthHTML}${weaknessHTML}</div>
+                              </div>`;
+}

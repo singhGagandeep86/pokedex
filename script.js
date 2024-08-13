@@ -3,9 +3,9 @@ isAlreadyLoading = false;
 
 async function init() {
     await pokemonsToArray();
-    // showLoadingScreen();
+     showLoadingScreen();
     await render(1);
-    // hideLoadingScreen();
+     hideLoadingScreen();
 }
 
 let pokemons = [];
@@ -43,32 +43,39 @@ async function generatePokemon(i, j) {
     let Selected_Board = document.getElementById('sel_Cardboard');
     Selected_Board.innerHTML = '';
     let pokemonUrl = pokemons[i - 1];
-    let pokemon = await fetch(`${pokemonUrl}`);
-    let pokemonAsJson = await pokemon.json();
-    let strength = pokemonAsJson['types'][0]['type']['name'];
+    let { mainPic, name, strength, pokemonAsJson } = await pokemonFetcher(pokemonUrl);
     let weaknessHTML = '';
     let main_Board = document.getElementById('mainBoard');
-    if (pokemonAsJson['types'][1]) {
-        weakness = pokemonAsJson['types'][1]['type']['name'];
-        weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
+    let strengthHTML = `<div id="strength${i}" class="type">${strength}</div>`;
+    if (ifPokemonhasSecondType(pokemonAsJson)) {
+        weaknessHTML = await abc(i, pokemonAsJson);
     }
-    main_Board.innerHTML += revealPokemons(i, j, pokemonAsJson, weaknessHTML, strength);
+    main_Board.innerHTML += revealPokemons(i, j, mainPic, name, weaknessHTML, strengthHTML);
     document.getElementById('load_Button').innerHTML = `<button onclick="loadMore(${j})">Mehr Pokémon laden</button>`;
     generateFirstTypeColour(strength, i);
     generateSecondTypeColour(i, pokemonAsJson);
 }
 
-//diese function geht nicht kommt error  :(
+function ifPokemonhasSecondType(pokemonAsJson) {
+    return pokemonAsJson['types'][1];
+}
+
+async function pokemonFetcher(pokemonUrl) {
+    let pokemon = await fetch(`${pokemonUrl}`);
+    let pokemonAsJson = await pokemon.json();
+    let mainPic = pokemonAsJson['sprites']['other']['official-artwork']['front_default'];
+    let name = pokemonAsJson['forms'][0]['name'];
+    let strength = pokemonAsJson['types'][0]['type']['name'];
+    return { mainPic, name, strength, pokemonAsJson };
+}
+
 async function abc(i, pokemonAsJson) {
     weakness = pokemonAsJson['types'][1]['type']['name'];
     weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
-    return;
+    return weaknessHTML;
 }
 
-function revealPokemons(i, j, pokemonAsJson, weaknessHTML, strength) {
-    let strengthHTML = `<div id="strength${i}" class="type">${strength}</div>`;
-    let mainPic = pokemonAsJson['sprites']['other']['official-artwork']['front_default'];
-    let name = pokemonAsJson['forms'][0]['name'];
+function revealPokemons(i, j, mainPic, name, weaknessHTML, strengthHTML) {
     return `<div class="Card" id="${i}" onclick="DetailedPokemon(${i}, ${j})">
                                              <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
                                               <div class="types">${strengthHTML}${weaknessHTML}</div></div>`
@@ -161,7 +168,6 @@ async function showStats(currentPokemon) {
     document.getElementById('listability').innerHTML = showStatsData(stat_1, stat_2, stat_3, stat_4, stat_5, stat_6);
 }
 
-
 async function showEvolution(currentPokemon) {
     let url = 'https://pokeapi.co/api/v2/pokemon-species/' + `${currentPokemon}`; 2
     let pokemon = await fetch(url);
@@ -191,7 +197,6 @@ async function generateFirstEvolution(evolution_chainAsJson) {
     }
 }
 
-
 async function generateSecondEvolution(evolution_chainAsJson) {
     if (evolution_chainAsJson['chain']['evolves_to'][0]['evolves_to'][0]) {
         let evolution_2_url = evolution_chainAsJson['chain']['evolves_to'][0]['evolves_to'][0]['species']['url'];
@@ -206,7 +211,6 @@ async function generateSecondEvolution(evolution_chainAsJson) {
         console.error(`Second Evolution not Found in Poke API`);
         return null;
     }
-
 }
 
 async function generateLastEvolution(evolution_chainAsJson) {
@@ -278,8 +282,7 @@ async function showSearch() {
                 await generateSearchedPokemon(newIndex, 1);
             }
         }
-    }
-    else if (searchValue.length == 0) {
+    } else if (searchValue.length == 0) {
         document.getElementById('sel_Cardboard').innerHTML = '';
         render(1);
     } isAlreadyLoading = false;
@@ -289,11 +292,7 @@ async function generateSearchedPokemon(i, j) {
     let Selected_Board = document.getElementById('sel_Cardboard');
     Selected_Board.innerHTML = '';
     let pokemonUrl = pokemons[i - 1];
-    let pokemon = await fetch(`${pokemonUrl}`);
-    let pokemonAsJson = await pokemon.json();
-    let mainPic = pokemonAsJson['sprites']['other']['official-artwork']['front_default'];
-    let name = pokemonAsJson['forms'][0]['name'];
-    let strength = pokemonAsJson['types'][0]['type']['name'];
+    let { mainPic, name, strength, pokemonAsJson } = await pokemonFetcher(pokemonUrl);
     let strengthHTML = `<div id="strength${i}" class="type">${strength}</div>`;
     let weaknessHTML = '';
     let main_Board = document.getElementById('mainBoard');
@@ -301,15 +300,8 @@ async function generateSearchedPokemon(i, j) {
         let weakness = pokemonAsJson['types'][1]['type']['name'];
         weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
     }
-    main_Board.innerHTML += `<div class="Card" id="${i}" onclick="DetailedPokemon(${i}, ${j})">
-                                             <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
-                                              <div class="types">${strengthHTML}${weaknessHTML}</div>
-                              </div>`;
+    main_Board.innerHTML += showDetailedCard(i, j, mainPic, name, strengthHTML, weaknessHTML);
     document.getElementById('load_Button').innerHTML = '';
     generateFirstTypeColour(strength, i);
     generateSecondTypeColour(i, pokemonAsJson);
-}
-
-function ifPokemonhasSecondType(pokemonAsJson) {
-    return pokemonAsJson['types'][1];
 }
