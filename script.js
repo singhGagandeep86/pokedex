@@ -48,7 +48,7 @@ async function generatePokemon(i, j) {
     let main_Board = document.getElementById('mainBoard');
     let strengthHTML = `<div id="strength${i}" class="type">${strength}</div>`;
     if (ifPokemonhasSecondType(pokemonAsJson)) {
-        weaknessHTML = await abc(i, pokemonAsJson);
+        weaknessHTML = await generateSecondType(i, pokemonAsJson);
     }
     main_Board.innerHTML += revealPokemons(i, j, mainPic, name, weaknessHTML, strengthHTML);
     document.getElementById('load_Button').innerHTML = `<button onclick="loadMore(${j})">Mehr Pokémon laden</button>`;
@@ -69,7 +69,7 @@ async function pokemonFetcher(pokemonUrl) {
     return { mainPic, name, strength, pokemonAsJson };
 }
 
-async function abc(i, pokemonAsJson) {
+async function generateSecondType(i, pokemonAsJson) {
     weakness = pokemonAsJson['types'][1]['type']['name'];
     weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
     return weaknessHTML;
@@ -98,16 +98,16 @@ async function DetailedPokemon(num, j) {
     let Selected_Board = document.getElementById('sel_Cardboard');
     addProperties(Selected_Board);
     if (ifPokemonhasSecondType(pokemonAsJson)) {
-        weaknessHTML = await xyz(num, pokemonAsJson);
+        weaknessHTML = await secondGenerateInDetailsTypeColour(num, pokemonAsJson);
     }
     Selected_Board.innerHTML = showSelectedPokemon(num, j, name, mainPic, strengthHTML, weaknessHTML);
-    document.getElementById('sel_Cardboard').addEventListener('click', function (exit) { if (exit.target !== this)  return exitToMain(); });
+    document.getElementById('sel_Cardboard').addEventListener('click', function (exit) { if (exit.target !== this) return; exitToMain();});
     document.getElementById(`info_${num}`).innerHTML = showAbout(num);
     firstGenerateTypeColour(strength, num);
     secondGenerateTypeColour(num, pokemonAsJson);
 }
 
-async function xyz(i, pokemonAsJson) {
+async function secondGenerateInDetailsTypeColour(i, pokemonAsJson) {
     weakness = pokemonAsJson['types'][1]['type']['name'];
     weaknessHTML = `<div id="weakness_${i}" class="type">${weakness}</div>`;
     return weaknessHTML;
