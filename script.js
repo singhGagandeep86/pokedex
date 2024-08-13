@@ -3,9 +3,9 @@ isAlreadyLoading = false;
 
 async function init() {
     await pokemonsToArray();
-     showLoadingScreen();
+    showLoadingScreen();
     await render(1);
-     hideLoadingScreen();
+    hideLoadingScreen();
 }
 
 let pokemons = [];
@@ -92,28 +92,25 @@ async function loadMore(j) {
 
 async function DetailedPokemon(num, j) {
     let url = 'https://pokeapi.co/api/v2/pokemon/' + `${num}`;
-    let pokemon = await fetch(url);
-    let pokemonAsJson = await pokemon.json();
-    let name = pokemonAsJson['forms'][0]['name'];
-    let strength = pokemonAsJson['types'][0]['type']['name'];
+    let { mainPic, name, strength, pokemonAsJson } = await pokemonFetcher(url);
     let strengthHTML = `<div id="strength_${num}" class="type">${strength}</div>`;
-    let mainPic = pokemonAsJson['sprites']['other']['official-artwork']['front_default'];
     let weaknessHTML = '';
     let Selected_Board = document.getElementById('sel_Cardboard');
     addProperties(Selected_Board);
-    if (pokemonAsJson['types'][1]) {
-        let weakness = pokemonAsJson['types'][1]['type']['name'];
-        weaknessHTML = `<div id="weakness_${num}" class="type">${weakness}</div>`;
+    if (ifPokemonhasSecondType(pokemonAsJson)) {
+        weaknessHTML = await xyz(num, pokemonAsJson);
     }
     Selected_Board.innerHTML = showSelectedPokemon(num, j, name, mainPic, strengthHTML, weaknessHTML);
-    document.getElementById('sel_Cardboard').addEventListener('click', function (exit) {
-        if (exit.target !== this)
-            return;
-        exitToMain();
-    });
+    document.getElementById('sel_Cardboard').addEventListener('click', function (exit) { if (exit.target !== this)  return exitToMain(); });
     document.getElementById(`info_${num}`).innerHTML = showAbout(num);
     firstGenerateTypeColour(strength, num);
     secondGenerateTypeColour(num, pokemonAsJson);
+}
+
+async function xyz(i, pokemonAsJson) {
+    weakness = pokemonAsJson['types'][1]['type']['name'];
+    weaknessHTML = `<div id="weakness_${i}" class="type">${weakness}</div>`;
+    return weaknessHTML;
 }
 
 function previousPokemon(currentPokemon, start) {
