@@ -1,5 +1,12 @@
 
+let base_Url = "https://pokeapi.co/api/v2/pokemon?limit=1040&offset=0";
+
 isAlreadyLoading = false;
+
+let timeOut;
+
+let pokemons = [];
+let pokemonsNames = [];
 
 async function init() {
     await pokemonsToArray();
@@ -7,11 +14,6 @@ async function init() {
     await render(1);
     hideLoadingScreen();
 }
-
-let pokemons = [];
-let pokemonsNames = [];
-
-let base_Url = "https://pokeapi.co/api/v2/pokemon?limit=1040&offset=0";
 
 function showLoadingScreen() {
     document.getElementById('loadingScreen').style.display = 'flex';
@@ -47,17 +49,21 @@ async function generatePokemon(i, j) {
     let weaknessHTML = '';
     let main_Board = document.getElementById('mainBoard');
     let strengthHTML = `<div id="strength${i}" class="type">${strength}</div>`;
-    if (ifPokemonhasSecondType(pokemonAsJson)) {
-        weaknessHTML = await generateSecondType(i, pokemonAsJson);
-    }
+    weaknessHTML = await sunny(i, pokemonAsJson);
     main_Board.innerHTML += revealPokemons(i, j, mainPic, name, weaknessHTML, strengthHTML);
     document.getElementById('load_Button').innerHTML = `<button onclick="loadMore(${j})">Mehr Pokémon laden</button>`;
     generateFirstTypeColour(strength, i);
     generateSecondTypeColour(i, pokemonAsJson);
 }
 
-function ifPokemonhasSecondType(pokemonAsJson) {
-    return pokemonAsJson['types'][1];
+async function sunny(i, pokemonAsJson) {
+    if (pokemonAsJson['types'][1]) {
+        weakness = pokemonAsJson['types'][1]['type']['name'];
+        return weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
+    }
+    else {
+        return '';
+    }
 }
 
 async function pokemonFetcher(pokemonUrl) {
@@ -67,12 +73,6 @@ async function pokemonFetcher(pokemonUrl) {
     let name = pokemonAsJson['forms'][0]['name'];
     let strength = pokemonAsJson['types'][0]['type']['name'];
     return { mainPic, name, strength, pokemonAsJson };
-}
-
-async function generateSecondType(i, pokemonAsJson) {
-    weakness = pokemonAsJson['types'][1]['type']['name'];
-    weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
-    return weaknessHTML;
 }
 
 async function loadMore(j) {
@@ -91,18 +91,9 @@ async function detailedPokemon(num, j) {
     let weaknessHTML = '';
     let Selected_Board = document.getElementById('sel_Cardboard');
     addProperties(Selected_Board);
-    if (ifPokemonhasSecondType(pokemonAsJson)) {
-        weaknessHTML = await secondGenerateInDetailsTypeColour(num, pokemonAsJson);
-    }
+    weaknessHTML = await secondGenerateInDetailsTypeColour(num, pokemonAsJson);
     Selected_Board.innerHTML = showSelectedPokemon(num, j, name, mainPic, strengthHTML, weaknessHTML);
-    if (num === 1) {
-        console.log(`first`);
-        document.getElementById('preButton').style.opacity = '0.2';
-    }
-    if (num === j + 39) {
-        console.log(`Last`);
-        document.getElementById('nxtButton').style.opacity = '0.2';
-    }
+    buttonDisable(num, j);
     document.getElementById('sel_Cardboard').addEventListener('click', function (exit) { if (exit.target !== this) return; exitToMain(); });
     document.getElementById(`info_${num}`).innerHTML = showAbout(num);
     firstGenerateTypeColour(strength, num);
@@ -110,9 +101,13 @@ async function detailedPokemon(num, j) {
 }
 
 async function secondGenerateInDetailsTypeColour(i, pokemonAsJson) {
-    weakness = pokemonAsJson['types'][1]['type']['name'];
-    weaknessHTML = `<div id="weakness_${i}" class="type">${weakness}</div>`;
-    return weaknessHTML;
+    if (pokemonAsJson['types'][1]) {
+        weakness = pokemonAsJson['types'][1]['type']['name'];
+        return weaknessHTML = `<div id="weakness_${i}" class="type">${weakness}</div>`;
+    }
+    else {
+        return '';
+    }
 }
 
 function previousPokemon(currentPokemon, start) {
@@ -238,28 +233,26 @@ function generateEvolution(main, evo_1, evo_2, evo_3) {
 }
 
 function mainEvolutionChain(main, evo_1, evo_2, evo_3) {
-    let evolution_1_Pic = evo_1['sprites']['other']['official-artwork']['front_default'];
-    let evolution_3_Pic = evo_2['sprites']['other']['official-artwork']['front_default'];
-    let evolution_2_Pic = evo_3['sprites']['other']['official-artwork']['front_default'];
-    let evolution_1_Name = evo_1['name'];
-    let evolution_3_Name = evo_2['name'];
-    let evolution_2_Name = evo_3['name'];
+    let evol_1_Pic = evo_1['sprites']['other']['official-artwork']['front_default'];
+    let evol_3_Pic = evo_2['sprites']['other']['official-artwork']['front_default'];
+    let evol_2_Pic = evo_3['sprites']['other']['official-artwork']['front_default'];
+    let evol_1_Name = evo_1['name'];
+    let evol_3_Name = evo_2['name'];
+    let evol_2_Name = evo_3['name'];
     let info = document.getElementById(`info_${main}`);
     info.innerHTML = `<div class="showAbout"><h3>Evolution Chain</h3><div id="evolution" class="evolutionChain"></div>`;
-    document.getElementById('evolution').innerHTML = `<div class="evo_Poke"><img class="evoutionImage" src="${evolution_1_Pic}">${evolution_1_Name}</div>
-                                                       <div class="evo_Poke"><img class="evoutionImage" src="${evolution_2_Pic}">${evolution_2_Name}</div>
-                                                       <div class="evo_Poke"><img class="evoutionImage" src="${evolution_3_Pic}">${evolution_3_Name}</div>`;
+    document.getElementById('evolution').innerHTML
+        = showCompleteEvolution(evol_1_Pic, evol_3_Pic, evol_2_Pic, evol_1_Name, evol_3_Name, evol_2_Name);
 }
 
 function evolutionChainSmall(main, evo_1, evo_3) {
-    let evolution_1_Pic = evo_1['sprites']['other']['official-artwork']['front_default'];
-    let evolution_2_Pic = evo_3['sprites']['other']['official-artwork']['front_default'];
-    let evolution_1_Name = evo_1['name'];
-    let evolution_2_Name = evo_3['name'];
+    let evol_1_Pic = evo_1['sprites']['other']['official-artwork']['front_default'];
+    let evol_2_Pic = evo_3['sprites']['other']['official-artwork']['front_default'];
+    let evol_1_Name = evo_1['name'];
+    let evol_2_Name = evo_3['name'];
     let info = document.getElementById(`info_${main}`);
     info.innerHTML = `<div class="showAbout"><h3>Evolution Chain</h3><div id="evolution" class="evolutionChain"></div>`;
-    document.getElementById('evolution').innerHTML = `<div class="evo_Poke"><img class="evoutionImage" src="${evolution_1_Pic}">${evolution_1_Name}</div>
-                                                       <div class="evo_Poke"><img class="evoutionImage" src="${evolution_2_Pic}">${evolution_2_Name}</div>`;
+    document.getElementById('evolution').innerHTML = showSmallEvolution(evol_1_Pic, evol_2_Pic, evol_1_Name, evol_2_Name);
 }
 
 function exitToMain() {
@@ -268,30 +261,32 @@ function exitToMain() {
     document.getElementById('body').style.overflow = "";
 }
 
-let timeOut;
-
 async function showSearch() {
     clearTimeout(timeOut);
     timeOut = setTimeout(async () => {
         const searchValue = document.getElementById('input').value.toLowerCase();
         if (searchValue.length >= 3 && isAlreadyLoading == false) {
-            isAlreadyLoading = true;
-            const searchResults = pokemonsNames.filter(pokemon => pokemon.includes(searchValue));
-            document.getElementById('mainBoard').innerHTML = '';
-            for (const result of searchResults) {
-                let index = pokemonsNames.findIndex(pokemon => pokemon.includes(result));
-                if (index !== -1) {
-                    let newIndex = index + 1;
-                    await generateSearchedPokemon(newIndex, 1);
-                }
-            }
-            isAlreadyLoading = false;
+            activeSearch(searchValue, isAlreadyLoading);
         } else {
             document.getElementById('sel_Cardboard').innerHTML = '';
             render(1);
             isAlreadyLoading = false;
         }
     }, 600);
+}
+
+async function activeSearch(searchValue, isAlreadyLoading) {
+    isAlreadyLoading = true;
+    const searchResults = pokemonsNames.filter(pokemon => pokemon.includes(searchValue));
+    document.getElementById('mainBoard').innerHTML = '';
+    for (const result of searchResults) {
+        let index = pokemonsNames.findIndex(pokemon => pokemon.includes(result));
+        if (index !== -1) {
+            let newIndex = index + 1;
+            await generateSearchedPokemon(newIndex, 1);
+        }
+    }
+    isAlreadyLoading = false;
 }
 
 async function generateSearchedPokemon(i, j) {
@@ -302,11 +297,8 @@ async function generateSearchedPokemon(i, j) {
     let strengthHTML = `<div id="strength${i}" class="type">${strength}</div>`;
     let weaknessHTML = '';
     let main_Board = document.getElementById('mainBoard');
-    if (ifPokemonhasSecondType(pokemonAsJson)) {
-        let weakness = pokemonAsJson['types'][1]['type']['name'];
-        weaknessHTML = `<div id="weakness${i}" class="type">${weakness}</div>`;
-    }
-    main_Board.innerHTML += showDetailedCard(i, j, mainPic, name, strengthHTML, weaknessHTML);
+    weaknessHTML = await sunny(i, pokemonAsJson);
+    main_Board.innerHTML += revealPokemons(i, j, mainPic, name, strengthHTML, weaknessHTML);
     document.getElementById('load_Button').innerHTML = '';
     generateFirstTypeColour(strength, i);
     generateSecondTypeColour(i, pokemonAsJson);

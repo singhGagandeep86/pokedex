@@ -39,15 +39,28 @@ function revealPokemons(i, j, mainPic, name, weaknessHTML, strengthHTML) {
                                               <div class="types">${strengthHTML}${weaknessHTML}</div></div>`
 }
 
-function showDetailedCard(i, j, mainPic, name, strengthHTML, weaknessHTML){
-    return `<div class="Card" id="${i}" onclick="DetailedPokemon(${i}, ${j})">
-                                             <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
-                                              <div class="types">${strengthHTML}${weaknessHTML}</div>
-                              </div>`;
+function showCompleteEvolution(firstPic, thirdPic, secondPic, firstName, thirdName, secondName) {
+    return `<div class="evo_Poke"><img class="evoutionImage" src="${firstPic}">${firstName}</div>
+                                        <div class="evo_Poke"><img class="evoutionImage" src="${secondPic}">${secondName}</div>
+                                         <div class="evo_Poke"><img class="evoutionImage" src="${thirdPic}">${thirdName}</div>`;
 }
 
-function addProperties(Selected_Board){
+function showSmallEvolution(evol_1_Pic, evol_2_Pic, evol_1_Name, evol_2_Name) {
+    return `<div class="evo_Poke"><img class="evoutionImage" src="${evol_1_Pic}">${evol_1_Name}</div>
+                                         <div class="evo_Poke"><img class="evoutionImage" src="${evol_2_Pic}">${evol_2_Name}</div>`;
+}
+
+function addProperties(Selected_Board) {
     document.getElementById('body').style.height = "100vh";
     document.getElementById('body').style.overflow = "hidden";
     Selected_Board.style.display = "flex";
+}
+
+function buttonDisable(num, j) {
+    if (num === 1) {
+        document.getElementById('preButton').style.opacity = '0.2';
+    }
+    if (num === j + 39) {
+        document.getElementById('nxtButton').style.opacity = '0.2';
+    }
 }
