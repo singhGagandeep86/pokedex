@@ -13,8 +13,8 @@ function generateSecondTypeColour(i, pokemonAsJson) {
 }
 
 function firstGenerateTypeColour(strength, i) {
-    document.getElementById(`strength_${i}`).classList.add(`${strength}`);
-    document.getElementById(`card${i}`).classList.add(`${strength}` + 2);
+    document.getElementById(`strength_${i}`).classList.add(`${strength}` + 2);
+    document.getElementById(`card${i}`).classList.add(`${strength}`);
 }
 
 function secondGenerateTypeColour(i, pokemonAsJson) {

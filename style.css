@@ -63,7 +63,6 @@ input {
 input:focus {
     outline: none;
     font-size: 16px;
-    padding-left: 16px;
 }
 
 .board {
@@ -445,6 +444,10 @@ label {
         width: 96%;
     }
 
+    .detailedCard {
+        width: 62%;
+    }
+
     progress {
         margin-left: 4px;
         --w: 138px;
@@ -465,18 +468,12 @@ label {
         font-size: 0px;
     }
 
-    progress {
-        --w: 118px;
+    .detailedCard {
+        width: 74%;
     }
 
     .pokemonMain {
         margin-bottom: 0px;
-    }
-
-    .navinfos {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
     }
 
     .tab {
@@ -484,11 +481,11 @@ label {
     }
 
     .navpre {
-        margin-top: 4px;
+        margin-top: 86px;
     }
 
     .navnxt {
-        margin-top: 4px;
+        margin-top: 86px;
     }
 
     .showAbout {
@@ -511,33 +508,47 @@ label {
         height: 28%;
     }
 
-    .tab {
-        font-size: 10px;
-        padding-block: 0px;
-        padding-inline: 0px;
-        background-color: transparent;
-        color: #565353;
-    }
-
     .pok_big_img {
         width: 235px;
         height: 235px;
         margin-bottom: 0px;
     }
+
+    .detailedCard {
+        width: 89%;
+    }
 }
 
 @media (max-width : 458px) {
+    .detailedCard {
+        width: 78%;
+    }
+
     .pok_big_img {
         width: 185px;
         height: 185px;
     }
 
     table {
-        font-size: 10px;
+        font-size: 14px;
     }
 
     progress {
-        --w: 98px;
+        --w: 160px;
+    }
+
+    .navinfos {
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .navpre {
+        margin-top: 0px;
+    }
+
+    .navnxt {
+        margin-top: 13px;
     }
 
     h3 {
@@ -555,7 +566,7 @@ label {
     }
 }
 
-@media (max-width : 378px) {
+@media (max-width : 382px) {
     .logo {
         height: 48%;
         margin-inline: 6px;
@@ -564,17 +575,7 @@ label {
     .miniLogo {
         margin-inline: 6px;
     }
-
-    table {
-        font-size: 8px;
-    }
-
-    progress {
-        --w: 86px;
-    }
 }
-
-
 
 .loading-screen {
     position: fixed;

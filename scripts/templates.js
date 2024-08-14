@@ -18,11 +18,9 @@ function showSelectedPokemon(num, j, name, mainPic, strengthHTML, weaknessHTML) 
                                 <div class="navinfos">
                        <img class="navpre" id="preButton" onclick="previousPokemon(${num}, ${j})" src="./Images/Icon/navButton.png">
                              <div id="info_${num}"></div>
-                       <img class="navnxt" onclick="nextPokemon(${num}, ${j})" src="./Images/Icon/navButton.png"></div>
+                       <img class="navnxt" id="nxtButton" onclick="nextPokemon(${num}, ${j})" src="./Images/Icon/navButton.png"></div>
               </div>`;
-
 }
-
 
 function showStatsData(hp, attack, defense, speed, special_attack, special_defense) {
     return `
@@ -35,11 +33,10 @@ function showStatsData(hp, attack, defense, speed, special_attack, special_defen
     `;
 }
 
-
-function addProperties(Selected_Board){
-    document.getElementById('body').style.height = "100vh";
-    document.getElementById('body').style.overflow = "hidden";
-    Selected_Board.style.display = "flex";
+function revealPokemons(i, j, mainPic, name, weaknessHTML, strengthHTML) {
+    return `<div class="Card" id="${i}" onclick="detailedPokemon(${i}, ${j})">
+                                             <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
+                                              <div class="types">${strengthHTML}${weaknessHTML}</div></div>`
 }
 
 function showDetailedCard(i, j, mainPic, name, strengthHTML, weaknessHTML){
@@ -47,4 +44,10 @@ function showDetailedCard(i, j, mainPic, name, strengthHTML, weaknessHTML){
                                              <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
                                               <div class="types">${strengthHTML}${weaknessHTML}</div>
                               </div>`;
+}
+
+function addProperties(Selected_Board){
+    document.getElementById('body').style.height = "100vh";
+    document.getElementById('body').style.overflow = "hidden";
+    Selected_Board.style.display = "flex";
 }

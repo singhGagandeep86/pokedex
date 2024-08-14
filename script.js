@@ -34,14 +34,14 @@ async function pokemonsToArray() {
 async function render(j) {
     let main_Board = document.getElementById('mainBoard');
     main_Board.innerHTML = '';
-    for (let i = j; i < j + 40; i++) {
+    for (let i = 1; i < j + 40; i++) {
         await generatePokemon(i, j);
     }
 }
 
 async function generatePokemon(i, j) {
-    let Selected_Board = document.getElementById('sel_Cardboard');
-    Selected_Board.innerHTML = '';
+    let selected_Board = document.getElementById('sel_Cardboard');
+    selected_Board.innerHTML = '';
     let pokemonUrl = pokemons[i - 1];
     let { mainPic, name, strength, pokemonAsJson } = await pokemonFetcher(pokemonUrl);
     let weaknessHTML = '';
@@ -75,12 +75,6 @@ async function generateSecondType(i, pokemonAsJson) {
     return weaknessHTML;
 }
 
-function revealPokemons(i, j, mainPic, name, weaknessHTML, strengthHTML) {
-    return `<div class="Card" id="${i}" onclick="DetailedPokemon(${i}, ${j})">
-                                             <img class="img" id="image" src="${mainPic}">Nr. ${i}<b>${name}</b>
-                                              <div class="types">${strengthHTML}${weaknessHTML}</div></div>`
-}
-
 async function loadMore(j) {
     j = j + 40;
     let main_Board = document.getElementById('mainBoard');
@@ -90,7 +84,7 @@ async function loadMore(j) {
     hideLoadingScreen();
 }
 
-async function DetailedPokemon(num, j) {
+async function detailedPokemon(num, j) {
     let url = 'https://pokeapi.co/api/v2/pokemon/' + `${num}`;
     let { mainPic, name, strength, pokemonAsJson } = await pokemonFetcher(url);
     let strengthHTML = `<div id="strength_${num}" class="type">${strength}</div>`;
@@ -101,7 +95,15 @@ async function DetailedPokemon(num, j) {
         weaknessHTML = await secondGenerateInDetailsTypeColour(num, pokemonAsJson);
     }
     Selected_Board.innerHTML = showSelectedPokemon(num, j, name, mainPic, strengthHTML, weaknessHTML);
-    document.getElementById('sel_Cardboard').addEventListener('click', function (exit) { if (exit.target !== this) return; exitToMain();});
+    if (num === 1) {
+        console.log(`first`);
+        document.getElementById('preButton').style.opacity = '0.2';
+    }
+    if (num === j + 39) {
+        console.log(`Last`);
+        document.getElementById('nxtButton').style.opacity = '0.2';
+    }
+    document.getElementById('sel_Cardboard').addEventListener('click', function (exit) { if (exit.target !== this) return; exitToMain(); });
     document.getElementById(`info_${num}`).innerHTML = showAbout(num);
     firstGenerateTypeColour(strength, num);
     secondGenerateTypeColour(num, pokemonAsJson);
@@ -116,14 +118,14 @@ async function secondGenerateInDetailsTypeColour(i, pokemonAsJson) {
 function previousPokemon(currentPokemon, start) {
     if (currentPokemon > start) {
         changedPokemon = currentPokemon - 1;
-        DetailedPokemon(changedPokemon, start);
+        detailedPokemon(changedPokemon, start);
     }
 }
 
 function nextPokemon(currentPokemon, limit) {
     if (currentPokemon < limit + 39) {
         changedPokemon = currentPokemon + 1;
-        DetailedPokemon(changedPokemon, limit);
+        detailedPokemon(changedPokemon, limit);
     }
 }
 
@@ -166,7 +168,7 @@ async function showStats(currentPokemon) {
 }
 
 async function showEvolution(currentPokemon) {
-    let url = 'https://pokeapi.co/api/v2/pokemon-species/' + `${currentPokemon}`; 2
+    let url = 'https://pokeapi.co/api/v2/pokemon-species/' + `${currentPokemon}`;
     let pokemon = await fetch(url);
     let pokemonAsJson = await pokemon.json();
     let evolution_chain_url = pokemonAsJson['evolution_chain']['url'];
@@ -228,14 +230,14 @@ async function generateLastEvolution(evolution_chainAsJson) {
 
 function generateEvolution(main, evo_1, evo_2, evo_3) {
     if (evo_1 && evo_2 && evo_3) {
-        MainEvolutionChain(main, evo_1, evo_2, evo_3);
+        mainEvolutionChain(main, evo_1, evo_2, evo_3);
     } else
         if (evo_1 && evo_3) {
-            EvolutionChainSmall(main, evo_1, evo_3);
+            evolutionChainSmall(main, evo_1, evo_3);
         }
 }
 
-function MainEvolutionChain(main, evo_1, evo_2, evo_3) {
+function mainEvolutionChain(main, evo_1, evo_2, evo_3) {
     let evolution_1_Pic = evo_1['sprites']['other']['official-artwork']['front_default'];
     let evolution_3_Pic = evo_2['sprites']['other']['official-artwork']['front_default'];
     let evolution_2_Pic = evo_3['sprites']['other']['official-artwork']['front_default'];
@@ -249,7 +251,7 @@ function MainEvolutionChain(main, evo_1, evo_2, evo_3) {
                                                        <div class="evo_Poke"><img class="evoutionImage" src="${evolution_3_Pic}">${evolution_3_Name}</div>`;
 }
 
-function EvolutionChainSmall(main, evo_1, evo_3) {
+function evolutionChainSmall(main, evo_1, evo_3) {
     let evolution_1_Pic = evo_1['sprites']['other']['official-artwork']['front_default'];
     let evolution_2_Pic = evo_3['sprites']['other']['official-artwork']['front_default'];
     let evolution_1_Name = evo_1['name'];
@@ -266,23 +268,30 @@ function exitToMain() {
     document.getElementById('body').style.overflow = "";
 }
 
+let timeOut;
+
 async function showSearch() {
-    const searchValue = document.getElementById('input').value.toLowerCase();
-    if (searchValue.length >= 3 && isAlreadyLoading == false) {
-        isAlreadyLoading = true;
-        const searchResults = pokemonsNames.filter(pokemon => pokemon.includes(searchValue));
-        document.getElementById('mainBoard').innerHTML = '';
-        for (const result of searchResults) {
-            let index = pokemonsNames.findIndex(pokemon => pokemon.includes(result));
-            if (index !== -1) {
-                let newIndex = index + 1;
-                await generateSearchedPokemon(newIndex, 1);
+    clearTimeout(timeOut);
+    timeOut = setTimeout(async () => {
+        const searchValue = document.getElementById('input').value.toLowerCase();
+        if (searchValue.length >= 3 && isAlreadyLoading == false) {
+            isAlreadyLoading = true;
+            const searchResults = pokemonsNames.filter(pokemon => pokemon.includes(searchValue));
+            document.getElementById('mainBoard').innerHTML = '';
+            for (const result of searchResults) {
+                let index = pokemonsNames.findIndex(pokemon => pokemon.includes(result));
+                if (index !== -1) {
+                    let newIndex = index + 1;
+                    await generateSearchedPokemon(newIndex, 1);
+                }
             }
+            isAlreadyLoading = false;
+        } else {
+            document.getElementById('sel_Cardboard').innerHTML = '';
+            render(1);
+            isAlreadyLoading = false;
         }
-    } else if (searchValue.length == 0) {
-        document.getElementById('sel_Cardboard').innerHTML = '';
-        render(1);
-    } isAlreadyLoading = false;
+    }, 600);
 }
 
 async function generateSearchedPokemon(i, j) {
